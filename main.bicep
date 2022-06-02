@@ -1,0 +1,50 @@
+// main bicep file to create sandbox environment/ rg in azure with custom RBAC roles tailored for the needs.
+
+targetScope = 'subscription'
+
+@description('Name Prefix of the resource group')
+param resourceGroupNamePrefix string
+
+param resourceGroupNameSuffix string = utcNow()
+
+param resourceLocation string = deployment().location
+
+@description('Name of the person for whom this rg is for')
+param initiatorFullName string
+
+var resourceGroupName = 'cloudies-${resourceGroupNamePrefix}-${resourceGroupNameSuffix}-rg'
+
+var cloudiesAADGroupId = '2078a69a-c18c-497c-8f6f-40872b7e91f7' //object ID of the Cloudys Azure Active Directory group
+
+var rbacDefinitionGuid = guid(subscription().id, 'Cloudies Contributor')
+
+// creates resource group 
+resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+  name: toLower(resourceGroupName)
+  location: resourceLocation
+  tags: {
+    createdBy: initiatorFullName
+  }
+}
+
+// calls bicep module from azure container registry to create rbac definiton on rg
+
+module cutomrbacdef 'br:cloudies.azurecr.io/iam/rbac-definition:1.0' = {
+  scope: rg
+  name: 'customRbacRoleDefiniton'
+  params: {
+    rbacDefinitionGuid: rbacDefinitionGuid
+    scopeId: rg.id
+  }
+}
+
+// calls bicep module from azure container registry to create rbac assignment on rg
+module customrbacassign 'br:cloudies.azurecr.io/iam/rbac-assignment:1.0' = {
+  scope: rg
+  name: 'customRbacRoleAssignment'
+  params: {
+    cloudiesAADGroupId: cloudiesAADGroupId
+    customRbacRoleDefinitionId: cutomrbacdef.outputs.resourceID
+    resourceGroupId: rg.id
+  }
+}

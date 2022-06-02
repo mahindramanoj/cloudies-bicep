@@ -1,0 +1,11 @@
+##############################################
+# This script is to deploy the bicep file main.bicep that will create a resource group with custom rbac roles tailored to your needs
+# For the below commands to work you need azure cli install on your machine. Refer my post mentioned in our slack cloudies channel
+# On your laptop, open powershell/windows terminal (for windows) or terminal (mac/linux)
+################################################
+
+# Optional and recommended, cd to directory where you copied/saved the file main.bicep from github repo on your laptop
+
+az login
+az deployment sub create --template-file <PATH TO MAIN.BICEP IN YOUR LAPTOP> --location <AZURE REGION WITHOUT SPACES. EG: canadacentral or southindia>
+
