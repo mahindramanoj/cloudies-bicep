@@ -6,11 +6,12 @@ param rbacDefinitionGuid string
 @description('Scope of the custom RBAC Role')
 param scopeId string
 
+param roleNameSuffix string = utcNow()
 
 resource customRbacRoleDefinition 'Microsoft.Authorization/roleDefinitions@2018-01-01-preview' = {
   name: rbacDefinitionGuid
   properties: {
-    roleName: 'Cloudies Contributor'
+    roleName: 'Cloudies Contributor ${roleNameSuffix}'
     description: 'RBAC role for the members of the cloudies group that has set of permissions tailored to their needs'
     type: 'customRole'
     permissions: [
@@ -88,18 +89,6 @@ resource customRbacRoleDefinition 'Microsoft.Authorization/roleDefinitions@2018-
           'Microsoft.Web/sites/*'
         ]
         notActions: [
-          'Microsoft.ContainerInstance/*'
-          'Microsoft.ContainerRegistry/*'
-          'Microsoft.ContainerService/*'
-          'Microsoft.DocumentDB/cassandraClusters/*'
-          'Microsoft.Databricks/workspaces/*'
-          'Microsoft.DataBox/*'
-          'Microsoft.DataFactory/*'
-          'Microsoft.DataLakeStore/*'
-          'Microsoft.MachineLearning/*'
-          'Microsoft.ServiceFabric/*'
-          'Microsoft.Synapse/*'
-          'Microsoft.VirtualMachineImages/*'
         ]
         dataActions: []
         notDataActions: []

@@ -16,7 +16,7 @@ var resourceGroupName = 'cloudies-${resourceGroupNamePrefix}-${resourceGroupName
 
 var cloudiesAADGroupId = '2078a69a-c18c-497c-8f6f-40872b7e91f7' //object ID of the Cloudys Azure Active Directory group
 
-var rbacDefinitionGuid = guid(subscription().id, 'Cloudies Contributor')
+//var rbacDefinitionGuid = guid(resourceGroup().id, 'Cloudies Contributor')
 
 // creates resource group 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -28,12 +28,11 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 }
 
 // calls bicep module from azure container registry to create rbac definiton on rg
-
-module cutomrbacdef 'br:cloudies.azurecr.io/iam/rbac-definition:1.0' = {
+module customrbacdef 'br:cloudies.azurecr.io/iam/rbac-definition:1.1' = {
   scope: rg
-  name: 'customRbacRoleDefiniton'
+  name: 'customRbacDefinition'
   params: {
-    rbacDefinitionGuid: rbacDefinitionGuid
+    rbacDefinitionGuid: guid(rg.id, 'Cloudies Contributor ${resourceGroupNameSuffix}')
     scopeId: rg.id
   }
 }
@@ -44,7 +43,7 @@ module customrbacassign 'br:cloudies.azurecr.io/iam/rbac-assignment:1.0' = {
   name: 'customRbacRoleAssignment'
   params: {
     cloudiesAADGroupId: cloudiesAADGroupId
-    customRbacRoleDefinitionId: cutomrbacdef.outputs.resourceID
+    customRbacRoleDefinitionId: customrbacdef.outputs.resourceID
     resourceGroupId: rg.id
   }
 }
