@@ -12,13 +12,14 @@ param resourceLocation string = deployment().location
 @description('Name of the person for whom this rg is for')
 param initiatorFullName string
 
+
 var resourceGroupName = 'cloudies-${resourceGroupNamePrefix}-${resourceGroupNameSuffix}-rg'
 
 var cloudiesAADGroupId = '2078a69a-c18c-497c-8f6f-40872b7e91f7' //object ID of the Cloudys Azure Active Directory group
 
 //var rbacDefinitionGuid = guid(resourceGroup().id, 'Cloudies Contributor')
 
-
+// Gather existing custom policy definition resource
 resource policySetDefinition 'Microsoft.Authorization/policySetDefinitions@2021-06-01' existing = {
   name: 'Cloudies'
 }
@@ -53,8 +54,9 @@ module customrbacassign 'br:cloudies.azurecr.io/iam/rbac-assignment:1.0' = {
   }
 }
 
+// Assigns custom policy set definition to the resource group
 module customInitiativeAssignment 'br:cloudies.azurecr.io/policy/initiative-assignment:1.0' = {
-  name: 'policySetAssignment'
+  name: 'policySetAssignment ${resourceGroupNameSuffix}'
   scope: rg
   params: {
     initiativeAssignmentId: policySetDefinition.id
