@@ -18,6 +18,11 @@ var cloudiesAADGroupId = '2078a69a-c18c-497c-8f6f-40872b7e91f7' //object ID of t
 
 //var rbacDefinitionGuid = guid(resourceGroup().id, 'Cloudies Contributor')
 
+
+resource policySetDefinition 'Microsoft.Authorization/policySetDefinitions@2021-06-01' existing = {
+  name: 'Cloudies'
+}
+
 // creates resource group 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: toLower(resourceGroupName)
@@ -45,5 +50,13 @@ module customrbacassign 'br:cloudies.azurecr.io/iam/rbac-assignment:1.0' = {
     cloudiesAADGroupId: cloudiesAADGroupId
     customRbacRoleDefinitionId: customrbacdef.outputs.resourceID
     resourceGroupId: rg.id
+  }
+}
+
+module customInitiativeAssignment 'br:cloudies.azurecr.io/policy/initiative-assignment:1.0' = {
+  name: 'policySetAssignment'
+  scope: rg
+  params: {
+    initiativeAssignmentId: policySetDefinition.id
   }
 }
