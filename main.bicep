@@ -56,9 +56,10 @@ module customrbacassign 'br:cloudies.azurecr.io/iam/rbac-assignment:1.0' = {
 
 // Assigns custom policy set definition to the resource group
 module customInitiativeAssignment 'br:cloudies.azurecr.io/policy/initiative-assignment:1.0' = {
-  name: 'policySetAssignment ${resourceGroupNameSuffix}'
+  name: 'policySetAssignment'
   scope: rg
   params: {
+    policySetAssignmentName:'policySetAssignment ${resourceGroupNameSuffix}'
     initiativeAssignmentId: policySetDefinition.id
   }
 }
