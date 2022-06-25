@@ -34,7 +34,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 }
 
 // calls bicep module from azure container registry to create rbac definiton on rg
-module customrbacdef 'br:cloudies.azurecr.io/iam/rbac-definition:1.1' = {
+module customrbacdef'br:cloudies.azurecr.io/iam/rbac-definition:1.0' = {
   scope: rg
   name: 'customRbacDefinition'
   params: {

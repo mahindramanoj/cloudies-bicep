@@ -39,6 +39,7 @@ resource customRbacRoleDefinition 'Microsoft.Authorization/roleDefinitions@2018-
           'Microsoft.Compute/virtualMachineScaleSets/*'
           'Microsoft.Consumption/*/read'
           'Microsoft.CostManagement/*/read'
+          'Microsoft.Compute/disks/*'
           //'Microsoft.DevOps/pipelines/*'
           'Microsoft.Insights/actiongroups/*'
           'Microsoft.Insights/activityLogAlerts/*'
